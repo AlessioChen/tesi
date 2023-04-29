@@ -13,16 +13,21 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
+import ned.DelayChannel;
+
+
 simple Client
 {
-    parameters: 
-        volatile double delayTime @unit(s);
+    parameters:
+        volatile double periodicTime @unit(s);
     gates:
         inout gate;
 }
 
 simple GatewayMqttSn
 {
+    parameters: 
+        volatile int numSensors; 
     gates:
         inout gate[];
 }
@@ -78,36 +83,29 @@ simple TangleModule
 
 network Network
 {
-    @display("bgb=523,380");
+	
+	parameters:
+	    int numSensors @prompt("Number of sensors") = default(2);
+	    
+	 types:
+        channel Channel extends ned.DelayChannel {
+            delay = 100ms;
+        }
 
     submodules:
-        sensor: Client {
-            @display("p=54,266");
-        }
-        sensor2: Client {
-            @display("p=34,128");
-        }
-        gatewayMqttsn: GatewayMqttSn {
-            @display("p=128,192");
-        }
-        broker: Broker {
-            @display("p=252,193");
-        }
-        proxy: ProxyMqttIota {
-            @display("p=234,78");
-        }
-        iotaNode: TxActorModule {
-            @display("p=353,192");
-        }
-        tangle: TangleModule {
-
-            @display("p=464,75");
-        }
+        sensors[numSensors]: Client;
+        gatewayMqttsn: GatewayMqttSn;
+        broker: Broker ;
+        proxy: ProxyMqttIota;
+        iotaNode: TxActorModule;
+        tangle: TangleModule;
     connections:
-        sensor.gate <--> {  delay = 100ms; } <--> gatewayMqttsn.gate++;
-        broker.gate++ <--> {  delay = 100ms; } <--> gatewayMqttsn.gate++;
-        broker.gate++ <--> {  delay = 100ms; } <--> proxy.gate++;
-        broker.gate++ <--> {  delay = 100 ms; } <--> iotaNode.gate++;
-        iotaNode.gate++ <--> {  delay = 100ms; } <--> tangle.gate++;
-        sensor2.gate <--> {  delay = 200ms; } <--> gatewayMqttsn.gate++;
+        
+        for i =0..numSensors-1{
+              sensors[i].gate <--> Channel <--> gatewayMqttsn.gate++;
+        }
+        broker.gate++ <--> Channel <--> gatewayMqttsn.gate++;
+        broker.gate++ <--> Channel <--> proxy.gate++;
+        broker.gate++ <--> Channel <--> iotaNode.gate++;
+        iotaNode.gate++ <--> Channel <--> tangle.gate++;
 }

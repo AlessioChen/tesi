@@ -1,8 +1,8 @@
 version 3
-run General-0-20230429-17:16:19-64915
+run General-0-20230429-18:07:39-66926
 attr configname General
-attr datetime 20230429-17:16:19
-attr datetimef 20230429-171619
+attr datetime 20230429-18:07:39
+attr datetimef 20230429-180739
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
@@ -10,7 +10,7 @@ attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Network
-attr processid 64915
+attr processid 66926
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -26,88 +26,119 @@ config Network.iotaNode.tipSelectionMethod "\"URTS\""
 config Network.iotaNode.recordWeights true
 config Network.iotaNode.k_Multiplier 2
 config Network.tangle.transactionLimit 1
-config Network.sensor.delayTime exponential(3s)
-config Network.sensor2.delayTime exponential(4s)
+config **.numSensors 4
+config **.periodicTime 0.5s
 
-par Network.sensor.gate$o.channel typename "\"ned.DelayChannel\""
-par Network.sensor.gate$o.channel disabled false
+par Network.sensors[0].gate$o.channel typename "\"Network.Channel\""
+par Network.sensors[0].gate$o.channel disabled false
 attr mutable ""
-par Network.sensor.gate$o.channel delay 0.1s
+par Network.sensors[0].gate$o.channel delay 0.1s
 attr mutable ""
 attr unit s
-par Network.gatewayMqttsn.gate$o[0].channel typename "\"ned.DelayChannel\""
+par Network.gatewayMqttsn.gate$o[0].channel typename "\"Network.Channel\""
 par Network.gatewayMqttsn.gate$o[0].channel disabled false
 attr mutable ""
 par Network.gatewayMqttsn.gate$o[0].channel delay 0.1s
 attr mutable ""
 attr unit s
-par Network.broker.gate$o[0].channel typename "\"ned.DelayChannel\""
-par Network.broker.gate$o[0].channel disabled false
+par Network.sensors[1].gate$o.channel typename "\"Network.Channel\""
+par Network.sensors[1].gate$o.channel disabled false
 attr mutable ""
-par Network.broker.gate$o[0].channel delay 0.1s
+par Network.sensors[1].gate$o.channel delay 0.1s
 attr mutable ""
 attr unit s
-par Network.gatewayMqttsn.gate$o[1].channel typename "\"ned.DelayChannel\""
+par Network.gatewayMqttsn.gate$o[1].channel typename "\"Network.Channel\""
 par Network.gatewayMqttsn.gate$o[1].channel disabled false
 attr mutable ""
 par Network.gatewayMqttsn.gate$o[1].channel delay 0.1s
 attr mutable ""
 attr unit s
-par Network.broker.gate$o[1].channel typename "\"ned.DelayChannel\""
+par Network.sensors[2].gate$o.channel typename "\"Network.Channel\""
+par Network.sensors[2].gate$o.channel disabled false
+attr mutable ""
+par Network.sensors[2].gate$o.channel delay 0.1s
+attr mutable ""
+attr unit s
+par Network.gatewayMqttsn.gate$o[2].channel typename "\"Network.Channel\""
+par Network.gatewayMqttsn.gate$o[2].channel disabled false
+attr mutable ""
+par Network.gatewayMqttsn.gate$o[2].channel delay 0.1s
+attr mutable ""
+attr unit s
+par Network.sensors[3].gate$o.channel typename "\"Network.Channel\""
+par Network.sensors[3].gate$o.channel disabled false
+attr mutable ""
+par Network.sensors[3].gate$o.channel delay 0.1s
+attr mutable ""
+attr unit s
+par Network.gatewayMqttsn.gate$o[3].channel typename "\"Network.Channel\""
+par Network.gatewayMqttsn.gate$o[3].channel disabled false
+attr mutable ""
+par Network.gatewayMqttsn.gate$o[3].channel delay 0.1s
+attr mutable ""
+attr unit s
+par Network.broker.gate$o[0].channel typename "\"Network.Channel\""
+par Network.broker.gate$o[0].channel disabled false
+attr mutable ""
+par Network.broker.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par Network.gatewayMqttsn.gate$o[4].channel typename "\"Network.Channel\""
+par Network.gatewayMqttsn.gate$o[4].channel disabled false
+attr mutable ""
+par Network.gatewayMqttsn.gate$o[4].channel delay 0.1s
+attr mutable ""
+attr unit s
+par Network.broker.gate$o[1].channel typename "\"Network.Channel\""
 par Network.broker.gate$o[1].channel disabled false
 attr mutable ""
 par Network.broker.gate$o[1].channel delay 0.1s
 attr mutable ""
 attr unit s
-par Network.proxy.gate$o[0].channel typename "\"ned.DelayChannel\""
+par Network.proxy.gate$o[0].channel typename "\"Network.Channel\""
 par Network.proxy.gate$o[0].channel disabled false
 attr mutable ""
 par Network.proxy.gate$o[0].channel delay 0.1s
 attr mutable ""
 attr unit s
-par Network.broker.gate$o[2].channel typename "\"ned.DelayChannel\""
+par Network.broker.gate$o[2].channel typename "\"Network.Channel\""
 par Network.broker.gate$o[2].channel disabled false
 attr mutable ""
 par Network.broker.gate$o[2].channel delay 0.1s
 attr mutable ""
 attr unit s
-par Network.iotaNode.gate$o[0].channel typename "\"ned.DelayChannel\""
+par Network.iotaNode.gate$o[0].channel typename "\"Network.Channel\""
 par Network.iotaNode.gate$o[0].channel disabled false
 attr mutable ""
 par Network.iotaNode.gate$o[0].channel delay 0.1s
 attr mutable ""
 attr unit s
-par Network.iotaNode.gate$o[1].channel typename "\"ned.DelayChannel\""
+par Network.iotaNode.gate$o[1].channel typename "\"Network.Channel\""
 par Network.iotaNode.gate$o[1].channel disabled false
 attr mutable ""
 par Network.iotaNode.gate$o[1].channel delay 0.1s
 attr mutable ""
 attr unit s
-par Network.tangle.gate$o[0].channel typename "\"ned.DelayChannel\""
+par Network.tangle.gate$o[0].channel typename "\"Network.Channel\""
 par Network.tangle.gate$o[0].channel disabled false
 attr mutable ""
 par Network.tangle.gate$o[0].channel delay 0.1s
 attr mutable ""
 attr unit s
-par Network.sensor2.gate$o.channel typename "\"ned.DelayChannel\""
-par Network.sensor2.gate$o.channel disabled false
-attr mutable ""
-par Network.sensor2.gate$o.channel delay 0.2s
-attr mutable ""
+par Network.sensors[0] typename "\"Client\""
+par Network.sensors[0] periodicTime 0.5s
 attr unit s
-par Network.gatewayMqttsn.gate$o[2].channel typename "\"ned.DelayChannel\""
-par Network.gatewayMqttsn.gate$o[2].channel disabled false
-attr mutable ""
-par Network.gatewayMqttsn.gate$o[2].channel delay 0.2s
-attr mutable ""
+par Network.sensors[1] typename "\"Client\""
+par Network.sensors[1] periodicTime 0.5s
 attr unit s
-par Network.sensor typename "\"Client\""
-par Network.sensor delayTime exponential(3s)
+par Network.sensors[2] typename "\"Client\""
+par Network.sensors[2] periodicTime 0.5s
 attr unit s
-par Network.sensor2 typename "\"Client\""
-par Network.sensor2 delayTime exponential(4s)
+par Network.sensors[3] typename "\"Client\""
+par Network.sensors[3] periodicTime 0.5s
 attr unit s
 par Network.gatewayMqttsn typename "\"GatewayMqttSn\""
+par Network.gatewayMqttsn numSensors 4
 par Network.broker typename "\"Broker\""
 par Network.proxy typename "\"ProxyMqttIota\""
 par Network.iotaNode typename "\"TxActorModule\""
@@ -126,4 +157,6 @@ par Network.tangle tipDataFilename "\"Data\\\\ex\\\\GeneraTipData.txt\""
 par Network.tangle tipAgeFilename "\"Data\\\\ex\\\\TipAge.txt\""
 par Network.tangle blockWeightFilename "\"Data\\\\ex\\\\BlockWeight.txt\""
 par Network typename "\"Network\""
+par Network numSensors 4
+attr prompt "Number of sensors"
 

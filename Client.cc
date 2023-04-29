@@ -23,23 +23,24 @@ Define_Module(Client);
 
 void Client::initialize()
 {
-    interval = 0.5;
+    interval = par("periodicTime");
     periodicMsg = new cMessage("periodic message");
-    scheduleAt(simTime() + interval, periodicMsg);
+    scheduleAt(simTime() + exponential(interval), periodicMsg);
 }
 
 void Client::handleMessage(cMessage *msg)
 {
 
     if ( msg == periodicMsg)  {
-        EV << "[CLIENT] Generating periodic message\n";
+        EV << "[CLIENT] Generating new message\n";
 
         cMessage *event = new cMessage("publish-SN");
         send(event, "gate$o");
+
+
         scheduleAt(simTime()+interval, periodicMsg);
    } else{
        EV << "[CLIENT] Received message: " << msg->getName();
-
        delete msg;
    }
 }
