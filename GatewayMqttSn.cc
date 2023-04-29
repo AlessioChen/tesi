@@ -8,7 +8,7 @@ using namespace omnetpp;
 class GatewayMqttSn : public cSimpleModule
 {
   protected:
-    int numSensors;
+    int brokerPort;
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
 };
@@ -18,15 +18,15 @@ Define_Module(GatewayMqttSn);
 
 void GatewayMqttSn::initialize()
 {
-    numSensors = par("numSensors");
+    brokerPort = par("numSensors");
 }
 
 void GatewayMqttSn::handleMessage(cMessage *msg)
 {
-    EV << "[GATEWAY] Received message '" << msg->getName() << "' \n";
+    EV_DEBUG << "[GATEWAY] Received message '" << msg->getName() << "' \n";
 
     cMessage *msgToSend = new cMessage("publish-MQTT");
     delete msg;
 
-    send(msgToSend, "gate$o", numSensors); // send to broker
+    send(msgToSend, "gate$o", brokerPort); // send to broker
 }
