@@ -274,8 +274,10 @@ void TangleModule::handleMessage(cMessage *msg)
         {
 
             Tx* justAttached = ( Tx* ) msg->getContextPointer();
+            EV_DEBUG << "Total Transactions now: " << justAttached->TxNumber << std::endl;
+            delete msg;
 
-            if( justAttached->TxNumber >= txLimit )
+           /* if( justAttached->TxNumber >= txLimit )
             {
 
                 EV_DEBUG << "Transaction Limit reached, stopping simulation" << std::endl;
@@ -340,7 +342,8 @@ void TangleModule::handleMessage(cMessage *msg)
                 EV_DEBUG << "Total Transactions now: " << justAttached->TxNumber << std::endl;
                 delete msg;
 
-            }
+            }*/
+
 
         }
 

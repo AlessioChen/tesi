@@ -22,7 +22,7 @@ void GatewayMqttSn::initialize()
 
 void GatewayMqttSn::handleMessage(cMessage *msg)
 {
-    EV << "Received message '" << msg->getName() << "' \n";
+    EV << "[GATEWAY] Received message '" << msg->getName() << "' \n";
 
     cMessage *msgToSend = new cMessage("publish-MQTT");
 

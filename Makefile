@@ -33,7 +33,13 @@ PROJECTRELATIVE_PATH =
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc, .msg and .sm files
-OBJS = $O/Broker.o $O/Client.o $O/GatewayMqttSn.o $O/IOTANode.o $O/ProxyMqttIota.o
+OBJS = \
+    $O/Broker.o \
+    $O/Client.o \
+    $O/GatewayMqttSn.o \
+    $O/ProxyMqttIota.o \
+    $O/Tangle.o \
+    $O/TangleModule.o
 
 # Message files
 MSGFILES =
