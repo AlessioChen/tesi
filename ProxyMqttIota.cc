@@ -29,5 +29,6 @@ void ProxyMqttIota::handleMessage(cMessage *msg)
           send(msgToSend, "gate$o", 0);  //send to broker
     }
 
+    delete msg;
 
 }

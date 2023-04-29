@@ -39,5 +39,6 @@ void Broker::handleMessage(cMessage *msg)
        }
 
 
+       delete msg;
 
 }
