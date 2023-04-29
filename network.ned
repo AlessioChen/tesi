@@ -48,18 +48,8 @@ simple TxActorModule
 {
     volatile double txGenRate @unit(s ); // how often a transactor will issue a transaction
     volatile double powTime @unit(s ) = default(0.1s); // time taken to compute proof of work to approve two transactions
+    string tipSelectionMethod = default("URTS") ;
 
-    //determines randomness of tip selection walk, higher is more deterministic, lower is more random
-    double walkAlphaValue; // *******MUST BE BETWEEN 0 AND 1*********
-    int walkDepth;
-
-    //determines which tip selection + attach method to use ()
-    string tipSelectionMethod;
-
-    bool recordWeights = default(true);
-
-    // Denotes how many walkers we use in WALK, k being the number of tips selected per attach
-    int k_Multiplier;
     gates:
         inout gate[];
 }
@@ -68,11 +58,6 @@ simple TangleModule
 {
     parameters:
         @display("i=block/routing" );
-        int transactionLimit; // how many transactions to simulate before stopping
-
-        string tipDataFilename = default("Data\\ex\\GeneraTipData.txt");
-        string tipAgeFilename = default("Data\\ex\\TipAge.txt");
-        string blockWeightFilename = default("Data\\ex\\BlockWeight.txt");
 
     gates:
         inout gate[];

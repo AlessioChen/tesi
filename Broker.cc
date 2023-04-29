@@ -34,7 +34,6 @@ void Broker::handleMessage(cMessage *msg)
 
        if( strcmp(msg->getName(), "publish-MQTT-proxy") == 0 ){
           cMessage *msgToSend = new cMessage("notify-MQTT");
-          //TODO send to Iota node
           send(msgToSend, "gate$o", 2); // send to Iota node
        }
 

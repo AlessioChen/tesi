@@ -22,7 +22,7 @@ void ProxyMqttIota::initialize()
 
 void ProxyMqttIota::handleMessage(cMessage *msg)
 {
-    EV_DEBUG << "Received message '" << msg->getName() << "' \n";
+    EV_DEBUG << "[PROXY] Received message '" << msg->getName() << "' \n";
 
     if( strcmp(msg->getName(), "notify-MQTT") == 0 ){
           cMessage *msgToSend = new cMessage("publish-MQTT-proxy");
