@@ -15,6 +15,8 @@
 
 simple Client
 {
+    parameters: 
+        volatile double delayTime @unit(s);
     gates:
         inout gate;
 }
@@ -33,30 +35,79 @@ simple Broker
 
 simple ProxyMqttIota
 {
-    gates: 
+    gates:
         inout gate[];
 }
 
-simple IOTANode{
-    gates: 
-        inout gate[]; 
+simple TxActorModule
+{
+    volatile double txGenRate @unit(s ); // how often a transactor will issue a transaction
+    volatile double powTime @unit(s ) = default(0.1s); // time taken to compute proof of work to approve two transactions
+
+    //determines randomness of tip selection walk, higher is more deterministic, lower is more random
+    double walkAlphaValue; // *******MUST BE BETWEEN 0 AND 1*********
+    int walkDepth;
+
+    //determines which tip selection + attach method to use ()
+    string tipSelectionMethod;
+
+    bool recordWeights = default(true);
+
+    // Denotes how many walkers we use in WALK, k being the number of tips selected per attach
+    int k_Multiplier;
+    gates:
+        inout gate[];
 }
+
+simple TangleModule
+{
+    parameters:
+        @display("i=block/routing" );
+        int transactionLimit; // how many transactions to simulate before stopping
+
+        string tipDataFilename = default("Data\\ex\\GeneraTipData.txt");
+        string tipAgeFilename = default("Data\\ex\\TipAge.txt");
+        string blockWeightFilename = default("Data\\ex\\BlockWeight.txt");
+
+    gates:
+        inout gate[];
+
+}
+
 
 
 network Network
 {
-    @display("bgb=324,268");
-    
+    @display("bgb=523,380");
+
     submodules:
-        sensor: Client;
-        gatewayMqttsn: GatewayMqttSn;
-        broker: Broker;
-        proxy: ProxyMqttIota;
-        iotaNode: IOTANode;
-        
+        sensor: Client {
+            @display("p=54,266");
+        }
+        sensor2: Client {
+            @display("p=34,128");
+        }
+        gatewayMqttsn: GatewayMqttSn {
+            @display("p=128,192");
+        }
+        broker: Broker {
+            @display("p=252,193");
+        }
+        proxy: ProxyMqttIota {
+            @display("p=234,78");
+        }
+        iotaNode: TxActorModule {
+            @display("p=353,192");
+        }
+        tangle: TangleModule {
+
+            @display("p=464,75");
+        }
     connections:
         sensor.gate <--> {  delay = 100ms; } <--> gatewayMqttsn.gate++;
         broker.gate++ <--> {  delay = 100ms; } <--> gatewayMqttsn.gate++;
         broker.gate++ <--> {  delay = 100ms; } <--> proxy.gate++;
-        broker.gate++ <--> {delay =100 ms; } <--> iotaNode.gate++;
+        broker.gate++ <--> {  delay = 100 ms; } <--> iotaNode.gate++;
+        iotaNode.gate++ <--> {  delay = 100ms; } <--> tangle.gate++;
+        sensor2.gate <--> {  delay = 200ms; } <--> gatewayMqttsn.gate++;
 }
