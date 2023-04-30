@@ -34,6 +34,8 @@ simple GatewayMqttSn
 
 simple Broker
 {
+    parameters: 
+        volatile double elaborationDelay; 
     gates:
         inout gate[];
 }

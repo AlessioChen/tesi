@@ -168,7 +168,7 @@ void TangleModule::handleMessage(cMessage *msg)
         {
 
             Tx* justAttached = ( Tx* ) msg->getContextPointer();
-            EV_DEBUG << "Total Transactions now: " << justAttached->TxNumber << std::endl;
+            EV_INFO << "Total Transactions now: " << justAttached->TxNumber << std::endl;
             delete msg;
 
         }

@@ -25,7 +25,7 @@ void Client::initialize()
 {
     interval = par("periodicTime");
     periodicMsg = new cMessage("periodic message");
-    scheduleAt(simTime(), periodicMsg);
+    scheduleAt(simTime() + exponential(interval), periodicMsg);
 }
 
 void Client::handleMessage(cMessage *msg)
