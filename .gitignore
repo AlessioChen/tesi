@@ -1,2 +1,4 @@
-out/*
-tesi_dbg
+/tesi_dbg
+/out/*
+/results/*
+/tesi
