@@ -46,7 +46,6 @@ simple ProxyMqttIota
 
 simple TxActorModule
 {
-    volatile double txGenRate @unit(s ); // how often a transactor will issue a transaction
     volatile double powTime @unit(s ) = default(0.1s); // time taken to compute proof of work to approve two transactions
     string tipSelectionMethod = default("URTS") ;
 
@@ -74,7 +73,7 @@ network Network
 	    
 	 types:
         channel Channel extends ned.DelayChannel {
-            delay = 100ms;
+            delay = 5ms;
         }
 
     submodules:
