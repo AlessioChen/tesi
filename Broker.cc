@@ -12,6 +12,9 @@ class Broker : public cSimpleModule
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
     void sendNextMessage(cMessage *msg);
+
+  public:
+      virtual ~Broker();  // destructor to clean up messageQueue
 };
 
 // The module class needs to be registered with OMNeT++
@@ -56,6 +59,14 @@ void Broker::sendNextMessage(cMessage *mqttMessage){
     } else if (strcmp(mqttMessage->getName(), "publish-MQTT-proxy") == 0) {
          cMessage *msgToSend = new cMessage("notify-MQTT");
          send(msgToSend, "gate$o", 2);  // send to Iota node
+    }
+}
+
+Broker::~Broker()
+{
+    while (!messageQueue.isEmpty()) {
+        cMessage *msg = (cMessage *) messageQueue.pop();
+        delete msg;
     }
 }
 

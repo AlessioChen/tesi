@@ -1,4 +1,5 @@
 /tesi_dbg
-/out/*
-/results/*
+/results/
 /tesi
+/out/
+/out/clang-release/
