@@ -3,12 +3,13 @@
 #include <stdio.h>
 #include <omnetpp.h>
 #include "Tangle.h"
+#include "MessageType.h"
 #include <fstream>
 #include <sstream>
 
+
 using namespace omnetpp;
 
-enum MessageType { NEXT_TX_TIMER, POW_TIMER, TIP_REQUEST, ATTACH_CONFIRM };
 
 
 // store pointers here to limit reallocation / copying
@@ -63,13 +64,13 @@ void TxActorModule::initialize()
 void TxActorModule::handleMessage(cMessage *msg)
 {
 
-    if(strcmp(msg->getName(), "notify-MQTT") == 0){
-        delete msg;
+    if(msg->getKind() == NOTIFY_MQTT){
         //send request to tangle for tips
 
         EV_DEBUG << "TxActor " << getId() << ": requesting tips from tangle" << std::endl;
         cMessage * tipRequest = new cMessage( "tipRequest", TIP_REQUEST );
         send( tipRequest, "gate$o" , 1); // tip request to tangle
+        delete msg;
     }
 
     else if( msg->isSelfMessage() && msg->getKind() == POW_TIMER ){

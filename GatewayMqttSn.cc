@@ -1,5 +1,6 @@
 #include <string.h>
 #include <omnetpp.h>
+#include "MessageType.h"
 
 using namespace omnetpp;
 
@@ -25,7 +26,7 @@ void GatewayMqttSn::handleMessage(cMessage *msg)
 {
     EV_DEBUG << "[GATEWAY] Received message '" << msg->getName() << "' \n";
 
-    cMessage *msgToSend = new cMessage("publish-MQTT");
+    cMessage *msgToSend = new cMessage("publish-MQTT", PUBLISH_MQTT);
     delete msg;
 
     send(msgToSend, "gate$o", brokerPort); // send to broker

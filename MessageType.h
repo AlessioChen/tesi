@@ -1,0 +1,14 @@
+#ifndef MESSAGETYPES_H_
+#define MESSAGETYPES_H_
+
+enum MessageType {
+    PUBLISH_SN, 
+    PUBLISH_MQTT,
+    PUBLISH_MQTT_PROXY, 
+    NOTIFY_MQTT,
+    POW_TIMER,
+    TIP_REQUEST,
+    ATTACH_CONFIRM
+};
+
+#endif /* MESSAGETYPES_H_ */

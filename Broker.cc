@@ -1,5 +1,7 @@
 #include <string.h>
 #include <omnetpp.h>
+#include "MessageType.h"
+
 
 using namespace omnetpp;
 
@@ -62,13 +64,22 @@ void Broker::handleMessage(cMessage *msg)
 
 
 void Broker::sendNextMessage(cMessage *mqttMessage){
-    if (strcmp(mqttMessage->getName(), "publish-MQTT") == 0) {
-         cMessage *msgToSend = new cMessage("notify-MQTT");
-         send(msgToSend, "gate$o", 1);  // send to proxy
-    } else if (strcmp(mqttMessage->getName(), "publish-MQTT-proxy") == 0) {
-         cMessage *msgToSend = new cMessage("notify-MQTT");
-         send(msgToSend, "gate$o", 2);  // send to Iota node
+
+    switch(mqttMessage->getKind()){
+        case PUBLISH_MQTT: {
+            cMessage *msgToSend = new cMessage("notify-MQTT", NOTIFY_MQTT);
+            send(msgToSend, "gate$o", 1);  // send to proxy
+            break;
+
+        }
+        case PUBLISH_MQTT_PROXY: {
+            cMessage *msgToSend = new cMessage("notify-MQTT", NOTIFY_MQTT);
+            send(msgToSend, "gate$o", 2);  // send to Iota node
+            break;
+        }
     }
+
+
 }
 
 void Broker::refreshDisplay() const

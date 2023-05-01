@@ -1,6 +1,7 @@
 
 #include <string.h>
 #include <omnetpp.h>
+#include "MessageType.h"
 
 using namespace omnetpp;
 
@@ -31,11 +32,12 @@ void Client::initialize()
 void Client::handleMessage(cMessage *msg)
 {
 
+
     if ( msg == periodicMsg)  {
         EV_DEBUG << "[CLIENT] Generating new message\n";
 
-        cMessage *event = new cMessage("publish-SN");
-        send(event, "gate$o");
+        cMessage *event = new cMessage("publish-SN", PUBLISH_SN);
+        send(event, "gate$o"); // send to gateway
 
 
         scheduleAt(simTime()+interval, periodicMsg);
