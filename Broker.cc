@@ -6,12 +6,16 @@ using namespace omnetpp;
 class Broker : public cSimpleModule
 {
   protected:
-    cQueue messageQueue;   // queue to store incoming messages
-    double elaborationDelay;
-
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
     void sendNextMessage(cMessage *msg);
+    void refreshDisplay() const override;
+
+  private:
+    cQueue messageQueue;    // queue to store incoming messages
+    double elaborationDelay;
+    long numSent;
+    long numReceived;
 
   public:
       virtual ~Broker();  // destructor to clean up messageQueue
@@ -23,6 +27,10 @@ Define_Module(Broker);
 void Broker::initialize()
 {
     elaborationDelay = par("elaborationDelay");
+    numSent = 0;
+    numReceived = 0;
+    WATCH(numSent);
+    WATCH(numReceived);
 
 }
 
@@ -34,13 +42,14 @@ void Broker::handleMessage(cMessage *msg)
             cMessage *mqttMessage = (cMessage *) messageQueue.front();
             sendNextMessage(mqttMessage);
             messageQueue.pop();
+            numSent++;
             delete mqttMessage;
             delete msg;
 
     }else if(strcmp(msg->getName(), "publish-MQTT") == 0 ||
             strcmp(msg->getName(), "publish-MQTT-proxy") == 0){
         messageQueue.insert(msg);
-
+        numReceived++;
         if(!messageQueue.isEmpty()){
             scheduleAt(simTime()+ elaborationDelay, new cMessage() );
         }
@@ -60,6 +69,13 @@ void Broker::sendNextMessage(cMessage *mqttMessage){
          cMessage *msgToSend = new cMessage("notify-MQTT");
          send(msgToSend, "gate$o", 2);  // send to Iota node
     }
+}
+
+void Broker::refreshDisplay() const
+{
+    char buf[40];
+    sprintf(buf, "rcvd: %ld sent: %ld", numReceived, numSent);
+    getDisplayString().setTagArg("t", 0, buf);
 }
 
 Broker::~Broker()
