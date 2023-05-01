@@ -26,7 +26,7 @@ void Client::initialize()
 {
     interval = par("periodicTime");
     periodicMsg = new cMessage("periodic message");
-    scheduleAt(simTime() + exponential(interval), periodicMsg);
+    scheduleAt(simTime() + uniform(0, interval), periodicMsg);
 }
 
 void Client::handleMessage(cMessage *msg)
@@ -37,6 +37,7 @@ void Client::handleMessage(cMessage *msg)
         EV_DEBUG << "[CLIENT] Generating new message\n";
 
         cMessage *event = new cMessage("publish-SN", PUBLISH_SN);
+        emit(endToEndSignal, simTime());
         send(event, "gate$o"); // send to gateway
 
 

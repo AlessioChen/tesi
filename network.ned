@@ -19,7 +19,8 @@ import ned.DelayChannel;
 simple Client
 {
     parameters:
-        volatile double periodicTime @unit(s);
+        double periodicTime @unit(s);
+        
     gates:
         inout gate;
 }
@@ -27,7 +28,8 @@ simple Client
 simple GatewayMqttSn
 {
     parameters: 
-        volatile int numSensors; 
+        int numSensors; 
+        double elaborationDelay @unit(ms);
     gates:
         inout gate[];
 }
@@ -35,20 +37,22 @@ simple GatewayMqttSn
 simple Broker
 {
     parameters: 
-        volatile double elaborationDelay; 
+        double elaborationDelay @unit(ms); 
     gates:
         inout gate[];
 }
 
 simple ProxyMqttIota
 {
+    parameters: 
+        double elaborationDelay @unit(ms);
     gates:
         inout gate[];
 }
 
 simple TxActorModule
 {
-    volatile double powTime @unit(s ) = default(0.1s); // time taken to compute proof of work to approve two transactions
+    double powTime @unit(s) = default(0.1s); // time taken to compute proof of work to approve two transactions
     string tipSelectionMethod = default("URTS") ;
 
     gates:

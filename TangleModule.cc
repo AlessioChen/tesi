@@ -30,6 +30,7 @@ class TxActorModule : public cSimpleModule
         virtual void initialize() override;
         virtual void handleMessage(cMessage *msg) override;
 
+
     public:
 
         std::map<int, t_ptrTx> actorTipView; // tips sent by tangle are stored by transactor till they can approve some
@@ -44,11 +45,13 @@ class TangleModule : public cSimpleModule
 
     private:
         int txCount;
+        long total_transactions;
         Tangle tn;
 
     protected:
         virtual void initialize() override;
         virtual void handleMessage( cMessage * msg ) override;
+        void refreshDisplay() const override;
 
 };
 
@@ -137,7 +140,9 @@ void TangleModule::initialize()
 {
       tracker.clear();
       txCount = 0;
+      total_transactions = 0;
       Tx::tx_totalCount = 0;
+      WATCH(total_transactions);
 }
 
 
@@ -170,10 +175,19 @@ void TangleModule::handleMessage(cMessage *msg)
 
             Tx* justAttached = ( Tx* ) msg->getContextPointer();
             EV_INFO << "Total Transactions now: " << justAttached->TxNumber << std::endl;
+            total_transactions = justAttached->TxNumber;
             delete msg;
 
         }
 
+}
+
+
+void TangleModule::refreshDisplay() const
+{
+    char buf[40];
+    snprintf(buf, sizeof(buf), "transactions: %ld", total_transactions);
+    getDisplayString().setTagArg("t", 0, buf);
 }
 
 
