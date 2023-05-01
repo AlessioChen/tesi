@@ -16,8 +16,7 @@ class Broker : public cSimpleModule
   private:
     cQueue messageQueue;    // queue to store incoming messages
     double elaborationDelay;
-    long numSent;
-    long numReceived;
+    long messageInQueue;
 
   public:
       virtual ~Broker();  // destructor to clean up messageQueue
@@ -29,10 +28,8 @@ Define_Module(Broker);
 void Broker::initialize()
 {
     elaborationDelay = par("elaborationDelay");
-    numSent = 0;
-    numReceived = 0;
-    WATCH(numSent);
-    WATCH(numReceived);
+    messageInQueue = 0;
+    WATCH(messageInQueue);
 
 }
 
@@ -44,14 +41,14 @@ void Broker::handleMessage(cMessage *msg)
             cMessage *mqttMessage = (cMessage *) messageQueue.front();
             sendNextMessage(mqttMessage);
             messageQueue.pop();
-            numSent++;
+            messageInQueue--;
             delete mqttMessage;
             delete msg;
 
     }else if(strcmp(msg->getName(), "publish-MQTT") == 0 ||
             strcmp(msg->getName(), "publish-MQTT-proxy") == 0){
         messageQueue.insert(msg);
-        numReceived++;
+        messageInQueue++;
         if(!messageQueue.isEmpty()){
             scheduleAt(simTime()+ elaborationDelay, new cMessage() );
         }
@@ -85,7 +82,7 @@ void Broker::sendNextMessage(cMessage *mqttMessage){
 void Broker::refreshDisplay() const
 {
     char buf[40];
-    sprintf(buf, "rcvd: %ld sent: %ld", numReceived, numSent);
+    sprintf(buf, "in queue: %ld", messageQueue.getLength());
     getDisplayString().setTagArg("t", 0, buf);
 }
 
