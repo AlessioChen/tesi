@@ -4,3 +4,10 @@
 /out/
 /out/clang-release/
 .cmdenv-log
+/.settings/
+/.cproject
+/.oppbuildspec
+/.project
+/.qtenvrc
+/.idea/
+/Makefile
