@@ -1,6 +1,7 @@
 #include <string.h>
 #include <omnetpp.h>
 #include "MessageType.h"
+#include "myMessage_m.h"
 
 using namespace omnetpp;
 
@@ -29,16 +30,13 @@ void GatewayMqttSn::initialize()
 void GatewayMqttSn::handleMessage(cMessage *msg)
 {
 
-    if(msg->isSelfMessage()){
-        cMessage *msgToSend = new cMessage("publish-MQTT", PUBLISH_MQTT);
-        send(msgToSend, "gate$o", brokerPort); // send to broker
-        delete msg;
-    }else if(msg->getKind() == PUBLISH_SN){
-        EV_DEBUG << "[GATEWAY] Received message '" << msg->getName() << "' \n";
-        scheduleAt(simTime()+elaborationDelay, new cMessage());
-        delete msg;
+    MyMessage *event = check_and_cast<MyMessage *>(msg);
+    if(event->isSelfMessage()){
+        send(event, "gate$o", brokerPort);  // send to broker
+    }else if(event->getKind() == PUBLISH_SN){
+        event->setKind(PUBLISH_MQTT);
+        scheduleAt(simTime()+uniform(0,elaborationDelay), event);
     }
-
 
 
 }

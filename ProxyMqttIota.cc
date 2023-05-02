@@ -1,6 +1,7 @@
 #include <string.h>
 #include <omnetpp.h>
 #include "MessageType.h"
+#include "myMessage_m.h"
 
 using namespace omnetpp;
 
@@ -26,17 +27,14 @@ void ProxyMqttIota::initialize()
 void ProxyMqttIota::handleMessage(cMessage *msg)
 {
 
+    MyMessage *event = check_and_cast<MyMessage *>(msg);
 
     if(msg->isSelfMessage()){
-
-       cMessage *msgToSend = new cMessage("publish-MQTT-proxy", PUBLISH_MQTT_PROXY);
-       send(msgToSend, "gate$o", 0);  //send to broker
-       delete msg;
+        event->setKind(PUBLISH_MQTT_PROXY);
+        send(event, "gate$o", 0);  //send to broker
 
     }else if(msg->getKind() == NOTIFY_MQTT){
-        EV_DEBUG << "[PROXY] Received message '" << msg->getName() << "' \n";
-        scheduleAt(simTime()+elaborationDelay, new cMessage());
-        delete msg;
+        scheduleAt(simTime()+uniform(0,elaborationDelay), event);
     }
 
 

@@ -8,6 +8,7 @@ enum MessageType {
     NOTIFY_MQTT,
     POW_TIMER,
     TIP_REQUEST,
+    TIP_MESSAGE,
     ATTACH_CONFIRM
 };
 

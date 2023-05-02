@@ -112,6 +112,7 @@ t_txApproved TxActor::URTipSelection( std::map<int, t_ptrTx> tips )
 
      for ( int i = 0; i < APPROVE_VAL; ++i )
      {
+
          if(tips.size() > 0)
          {
              std::uniform_int_distribution<int> tipDist( 0, tips.size() -1 );

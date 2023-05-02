@@ -2,6 +2,7 @@
 #include <string.h>
 #include <omnetpp.h>
 #include "MessageType.h"
+#include "myMessage_m.h"
 
 using namespace omnetpp;
 
@@ -26,25 +27,24 @@ void Client::initialize()
 {
     interval = par("periodicTime");
     periodicMsg = new cMessage("periodic message");
-    scheduleAt(simTime() + uniform(0, interval), periodicMsg);
+    scheduleAt(simTime(), periodicMsg);
 }
 
 void Client::handleMessage(cMessage *msg)
 {
 
-
     if ( msg == periodicMsg)  {
         EV_DEBUG << "[CLIENT] Generating new message\n";
 
-        cMessage *event = new cMessage("publish-SN", PUBLISH_SN);
-        emit(endToEndSignal, simTime());
+        MyMessage *event = new MyMessage("sensor_data", PUBLISH_SN);
+        event->setGenerationTime(simTime());
+        event->setTimestamp();
+
+
         send(event, "gate$o"); // send to gateway
 
 
         scheduleAt(simTime()+interval, periodicMsg);
-   } else{
-       EV_DEBUG << "[CLIENT] Received message: " << msg->getName();
-       delete msg;
    }
 }
 

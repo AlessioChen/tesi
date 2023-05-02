@@ -29,7 +29,7 @@ simple GatewayMqttSn
 {
     parameters: 
         int numSensors; 
-        double elaborationDelay @unit(ms);
+        double elaborationDelay;
     gates:
         inout gate[];
 }
@@ -37,7 +37,10 @@ simple GatewayMqttSn
 simple Broker
 {
     parameters: 
-        double elaborationDelay @unit(ms); 
+        @signal[buffer](type="long"); 
+        @statistic[sizeBuffer](title="size of buffer"; source="buffer"; record=vector,stats; interpolationmode=none);
+        double elaborationDelay;
+        double QuequeSpeed;
     gates:
         inout gate[];
 }
@@ -45,15 +48,18 @@ simple Broker
 simple ProxyMqttIota
 {
     parameters: 
-        double elaborationDelay @unit(ms);
+        double elaborationDelay;
     gates:
         inout gate[];
 }
 
 simple TxActorModule
 {
+    @signal[end_to_end](type="simtime_t"); 
+    @statistic[end_to_end_diff](title="end to end difference"; source="end_to_end"; record=vector,stats; interpolationmode=none);
     double powTime @unit(s) = default(0.1s); // time taken to compute proof of work to approve two transactions
     string tipSelectionMethod = default("URTS") ;
+
 
     gates:
         inout gate[];
@@ -61,7 +67,10 @@ simple TxActorModule
 
 simple TangleModule
 {
+    
+  	
     parameters:
+     
         @display("i=block/routing" );
 
     gates:

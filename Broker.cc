@@ -1,6 +1,7 @@
 #include <string.h>
 #include <omnetpp.h>
 #include "MessageType.h"
+#include "myMessage_m.h"
 
 
 using namespace omnetpp;
@@ -10,13 +11,15 @@ class Broker : public cSimpleModule
   protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
-    void sendNextMessage(cMessage *msg);
+    void sendNextMessage(MyMessage *msg);
     void refreshDisplay() const override;
 
   private:
     cQueue messageQueue;    // queue to store incoming messages
     double elaborationDelay;
-    int messageInQueue;
+    double QuequeSpeed;
+
+    simsignal_t bufferSignal;
 
   public:
       virtual ~Broker();  // destructor to clean up messageQueue
@@ -28,46 +31,62 @@ Define_Module(Broker);
 void Broker::initialize()
 {
     elaborationDelay = par("elaborationDelay");
-    messageInQueue = 0;
-    WATCH(messageInQueue);
+    QuequeSpeed = par("QuequeSpeed");
+    WATCH(messageQueue);
+
+    bufferSignal = registerSignal("buffer");
+
 
 }
 
 void Broker::handleMessage(cMessage *msg)
 {
 
-    if(msg->isSelfMessage() && !messageQueue.isEmpty()){
 
-            cMessage *mqttMessage = (cMessage *) messageQueue.front();
+    if(msg->isSelfMessage() ){
+
+        if(!messageQueue.isEmpty()){
+            MyMessage *mqttMessage = (MyMessage *) messageQueue.pop();
             sendNextMessage(mqttMessage);
-            messageQueue.pop();
-            messageInQueue--;
-            delete mqttMessage;
+
+            scheduleAt(simTime() + QuequeSpeed , msg);
+        }else{
             delete msg;
+        }
+
+
 
     }else if(msg->getKind() == PUBLISH_MQTT ||
              msg ->getKind() == PUBLISH_MQTT_PROXY){
-        messageQueue.insert(msg);
-        messageInQueue++;
-        scheduleAt(simTime()+ elaborationDelay, new cMessage());
+
+
+        MyMessage *event = check_and_cast<MyMessage *>(msg);
+
+        emit(bufferSignal, messageQueue.getLength());
+        messageQueue.insert(event);
+        if (messageQueue.getLength() == 1) {
+            scheduleAt(simTime() + uniform(0, elaborationDelay), new cMessage("next-message"));
+        }
+
+
     }
 
 
 }
 
 
-void Broker::sendNextMessage(cMessage *mqttMessage){
+void Broker::sendNextMessage(MyMessage *event){
 
-    switch(mqttMessage->getKind()){
+    switch(event->getKind()){
         case PUBLISH_MQTT: {
-            cMessage *msgToSend = new cMessage("notify-MQTT", NOTIFY_MQTT);
-            send(msgToSend, "gate$o", 1);  // send to proxy
+            event->setKind(NOTIFY_MQTT);
+            send(event, "gate$o", 1);  // send to proxy
             break;
 
         }
         case PUBLISH_MQTT_PROXY: {
-            cMessage *msgToSend = new cMessage("notify-MQTT", NOTIFY_MQTT);
-            send(msgToSend, "gate$o", 2);  // send to Iota node
+            event->setKind(NOTIFY_MQTT);
+            send(event, "gate$o", 2);  // send to Iota node
             break;
         }
     }
