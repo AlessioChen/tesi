@@ -29,6 +29,7 @@ simple GatewayMqttSn
 {
     parameters: 
         int numSensors; 
+        int numBrokers;
         double elaborationDelay;
     gates:
         inout gate[];
@@ -49,12 +50,16 @@ simple ProxyMqttIota
 {
     parameters: 
         double elaborationDelay;
+        int numBrokers;
     gates:
         inout gate[];
 }
 
 simple TxActorModule
 {
+    parameters: 
+        int numBrokers;
+        
     @signal[end_to_end](type="simtime_t"); 
     @statistic[end_to_end_diff](title="end to end difference"; source="end_to_end"; record=vector,stats; interpolationmode=none);
     double powTime @unit(s) = default(0.1s); // time taken to compute proof of work to approve two transactions
@@ -85,6 +90,7 @@ network Network
 	
 	parameters:
 	    int numSensors @prompt("Number of sensors") = default(2);
+	    int numBrokers @prompt("Number of brokers") = default(2);
 	    
 	 types:
         channel Channel extends ned.DelayChannel {
@@ -94,7 +100,7 @@ network Network
     submodules:
         sensors[numSensors]: Client;
         gatewayMqttsn: GatewayMqttSn;
-        broker: Broker ;
+        brokers[numBrokers]: Broker ;
         proxy: ProxyMqttIota;
         iotaNode: TxActorModule;
         tangle: TangleModule;
@@ -103,8 +109,12 @@ network Network
         for i =0..numSensors-1{
               sensors[i].gate <--> Channel <--> gatewayMqttsn.gate++;
         }
-        broker.gate++ <--> Channel <--> gatewayMqttsn.gate++;
-        broker.gate++ <--> Channel <--> proxy.gate++;
-        broker.gate++ <--> Channel <--> iotaNode.gate++;
+          for i =0..numBrokers-1{
+               brokers[i].gate++ <--> Channel <--> gatewayMqttsn.gate++;
+               brokers[i].gate++ <--> Channel <--> proxy.gate++;
+               brokers[i].gate++ <--> Channel <--> iotaNode.gate++;
+              
+        }
+       
         iotaNode.gate++ <--> Channel <--> tangle.gate++;
 }

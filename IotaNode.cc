@@ -17,6 +17,7 @@ class TxActorModule : public cSimpleModule
 
     private:
         int issueCount;
+        int tanglePort;
         TxActor self; // non omnetpp implmentation of transactor
         simtime_t powTime;
         simsignal_t endToEndSignal;
@@ -37,6 +38,7 @@ Define_Module(TxActorModule);
 void TxActorModule::initialize()
 {
     powTime = par( "powTime" );
+    tanglePort = par("numBrokers");
     endToEndSignal = registerSignal("end_to_end");
 
 }
@@ -76,7 +78,7 @@ void TxActorModule::handleMessage(cMessage *msg)
 
             //Tangle knows which tx was just attached from message context pointer
             event->setContextPointer( self.getMyTx().back() );
-            send( event, "gate$o", 1 );
+            send( event, "gate$o", tanglePort );
             emit(endToEndSignal, simTime() - event->getGenerationTime());
         }
     }  else  if(event->getKind() == NOTIFY_MQTT){
@@ -86,7 +88,7 @@ void TxActorModule::handleMessage(cMessage *msg)
 
                event->setKind(TIP_REQUEST);
 
-               send( event, "gate$o" , 1); // tip request to tangle
+               send( event, "gate$o" , tanglePort); // tip request to tangle
 
        }else if( event->getKind() == TIP_MESSAGE ){
            //TIP MESSAGE FROM TANGLE

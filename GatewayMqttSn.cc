@@ -14,6 +14,8 @@ class GatewayMqttSn : public cSimpleModule
     virtual void handleMessage(cMessage *msg) override;
 
   private:
+    int numSensors;
+    int numBrokers;
     int brokerPort;
     double elaborationDelay;
 };
@@ -23,13 +25,15 @@ Define_Module(GatewayMqttSn);
 
 void GatewayMqttSn::initialize()
 {
-    brokerPort = par("numSensors");
+    numSensors = par("numSensors");
+    numBrokers = par("numBrokers");
+
     elaborationDelay = par("elaborationDelay");
 }
 
 void GatewayMqttSn::handleMessage(cMessage *msg)
 {
-
+    brokerPort = int(uniform(numSensors,numSensors+numBrokers));
     MyMessage *event = check_and_cast<MyMessage *>(msg);
     if(event->isSelfMessage()){
         send(event, "gate$o", brokerPort);  // send to broker
