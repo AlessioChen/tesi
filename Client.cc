@@ -25,7 +25,7 @@ Define_Module(Client);
 
 void Client::initialize()
 {
-    interval = par("periodicTime");
+    interval = par("sensingPeriod");
     periodicMsg = new cMessage("periodic message");
     scheduleAt(simTime(), periodicMsg);
 }

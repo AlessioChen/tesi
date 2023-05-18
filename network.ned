@@ -19,7 +19,7 @@ import ned.DelayChannel;
 simple Client
 {
     parameters:
-        double periodicTime @unit(s);
+        double sensingPeriod @unit(s);
         
     gates:
         inout gate;
@@ -41,7 +41,7 @@ simple Broker
         @signal[buffer](type="long"); 
         @statistic[sizeBuffer](title="size of buffer"; source="buffer"; record=vector,stats; interpolationmode=none);
         double elaborationDelay;
-        double QuequeSpeed;
+        double serviceTime;
     gates:
         inout gate[];
 }

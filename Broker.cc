@@ -17,7 +17,7 @@ class Broker : public cSimpleModule
   private:
     cQueue messageQueue;    // queue to store incoming messages
     double elaborationDelay;
-    double QuequeSpeed;
+    double serviceTime;
 
     simsignal_t bufferSignal;
 
@@ -31,7 +31,7 @@ Define_Module(Broker);
 void Broker::initialize()
 {
     elaborationDelay = par("elaborationDelay");
-    QuequeSpeed = par("QuequeSpeed");
+    serviceTime = par("serviceTime");
     WATCH(messageQueue);
 
     bufferSignal = registerSignal("buffer");
@@ -49,7 +49,7 @@ void Broker::handleMessage(cMessage *msg)
             MyMessage *mqttMessage = (MyMessage *) messageQueue.pop();
             sendNextMessage(mqttMessage);
 
-            scheduleAt(simTime() + QuequeSpeed , msg);
+            scheduleAt(simTime() + serviceTime , msg);
         }else{
             delete msg;
         }
