@@ -16,6 +16,7 @@ class ProxyMqttIota : public cSimpleModule
     double elaborationDelay;
     int numBrokers;
     int brokerPort;
+    int index;
 };
 
 // The module class needs to be registered with OMNeT++
@@ -25,6 +26,7 @@ void ProxyMqttIota::initialize()
 {
     elaborationDelay = par("elaborationDelay");
     numBrokers = par("numBrokers");
+    index=0;
 
 }
 
@@ -32,7 +34,8 @@ void ProxyMqttIota::handleMessage(cMessage *msg)
 {
 
     MyMessage *event = check_and_cast<MyMessage *>(msg);
-    brokerPort = int(uniform(0, numBrokers));
+    brokerPort = (index % numBrokers);
+    index++;
 
     if(msg->isSelfMessage()){
         event->setKind(PUBLISH_MQTT_PROXY);

@@ -17,6 +17,7 @@ class GatewayMqttSn : public cSimpleModule
     int numSensors;
     int numBrokers;
     int brokerPort;
+    int index;
     double elaborationDelay;
 };
 
@@ -27,13 +28,15 @@ void GatewayMqttSn::initialize()
 {
     numSensors = par("numSensors");
     numBrokers = par("numBrokers");
+    int index=0;
 
     elaborationDelay = par("elaborationDelay");
 }
 
 void GatewayMqttSn::handleMessage(cMessage *msg)
 {
-    brokerPort = int(uniform(numSensors,numSensors+numBrokers));
+    brokerPort = numSensors + (index % numBrokers);
+    index++;
     MyMessage *event = check_and_cast<MyMessage *>(msg);
     if(event->isSelfMessage()){
         send(event, "gate$o", brokerPort);  // send to broker
