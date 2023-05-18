@@ -88,13 +88,15 @@ simple TangleModule
 network Network
 {
 	
-	parameters:
+	parameters:	
+	
 	    int numSensors @prompt("Number of sensors") = default(2);
 	    int numBrokers @prompt("Number of brokers") = default(2);
-	    
 	 types:
-        channel Channel extends ned.DelayChannel {
-            delay = 5ms;
+        channel WiredChannel extends ned.DelayChannel {
+           
+            delay = 0.5ms;
+            
         }
 
     submodules:
@@ -107,14 +109,14 @@ network Network
     connections:
         
         for i =0..numSensors-1{
-              sensors[i].gate <--> Channel <--> gatewayMqttsn.gate++;
+              sensors[i].gate <--> WiredChannel  <--> gatewayMqttsn.gate++;
         }
           for i =0..numBrokers-1{
-               brokers[i].gate++ <--> Channel <--> gatewayMqttsn.gate++;
-               brokers[i].gate++ <--> Channel <--> proxy.gate++;
-               brokers[i].gate++ <--> Channel <--> iotaNode.gate++;
+               brokers[i].gate++ <--> WiredChannel <--> gatewayMqttsn.gate++;
+               brokers[i].gate++ <--> WiredChannel <--> proxy.gate++;
+               brokers[i].gate++ <--> WiredChannel <--> iotaNode.gate++;
               
         }
        
-        iotaNode.gate++ <--> Channel <--> tangle.gate++;
+        iotaNode.gate++ <--> WiredChannel <--> tangle.gate++;
 }
