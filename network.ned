@@ -77,6 +77,9 @@ simple TangleModule
     parameters:
      
         @display("i=block/routing" );
+    
+    @signal[transactions_count](type="long"); 
+    @statistic[sizeBuffer](title="transactions count"; source="transactions_count"; record=vector,stats; interpolationmode=none);
 
     gates:
         inout gate[];

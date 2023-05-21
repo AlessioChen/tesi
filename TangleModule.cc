@@ -22,6 +22,7 @@ class TangleModule : public cSimpleModule
         int txCount;
         long total_transactions;
         Tangle tn;
+        simsignal_t transactionCountSignal;
 
 
 
@@ -42,6 +43,7 @@ void TangleModule::initialize()
       total_transactions = 0;
       Tx::tx_totalCount = 0;
       WATCH(total_transactions);
+      transactionCountSignal = registerSignal("transactions_count");
 
 }
 
@@ -82,8 +84,9 @@ void TangleModule::handleMessage(cMessage *msg)
 
 
 
-        //TODO emit signal
         total_transactions = justAttached->TxNumber +1 ;
+        emit(transactionCountSignal,total_transactions );
+
         delete event;
 
     }
