@@ -19,6 +19,8 @@ import ned.DelayChannel;
 simple Client
 {
     parameters:
+        @signal[generated_message_count](type="long"); 
+    	@statistic[sizeBuffer](title="generated message count"; source="generated_message_count"; record=vector,stats; interpolationmode=none);
         double sensingPeriod @unit(s);
         
     gates:
@@ -75,8 +77,7 @@ simple TangleModule
     
   	
     parameters:
-     
-        @display("i=block/routing" );
+    @display("i=block/routing" );
     
     @signal[transactions_count](type="long"); 
     @statistic[sizeBuffer](title="transactions count"; source="transactions_count"; record=vector,stats; interpolationmode=none);
