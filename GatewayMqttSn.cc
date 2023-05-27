@@ -35,10 +35,11 @@ void GatewayMqttSn::initialize()
 
 void GatewayMqttSn::handleMessage(cMessage *msg)
 {
-    brokerPort = numSensors + (index % numBrokers);
-    index++;
+
     MyMessage *event = check_and_cast<MyMessage *>(msg);
     if(event->isSelfMessage()){
+        brokerPort = numSensors + (index % numBrokers);
+        index++;
         send(event, "gate$o", brokerPort);  // send to broker
     }else if(event->getKind() == PUBLISH_SN){
         event->setKind(PUBLISH_MQTT);

@@ -34,10 +34,10 @@ void ProxyMqttIota::handleMessage(cMessage *msg)
 {
 
     MyMessage *event = check_and_cast<MyMessage *>(msg);
-    brokerPort = (index % numBrokers);
-    index++;
 
     if(msg->isSelfMessage()){
+        brokerPort = (index % numBrokers);
+        index++;
         event->setKind(PUBLISH_MQTT_PROXY);
         send(event, "gate$o", brokerPort);  //send to broker
     }else if(msg->getKind() == NOTIFY_MQTT){
